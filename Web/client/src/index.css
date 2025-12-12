@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  font-family: "Montserrat", sans-serif;
+}
+@layer base {
+  :root {
+    --background: 54 55% 98%;
+    --foreground: 54 70% 4%;
+    --muted: 54 38% 85%;
+    --muted-foreground: 54 11% 27%;
+    --popover: 54 55% 98%;
+    --popover-foreground: 54 70% 4%;
+    --card: 54 55% 97%;
+    --card-foreground: 54 70% 3%;
+    --border: 54 9% 89%;
+    --input: 54 9% 89%;
+    --primary: 54 61% 47%;
+    --primary-foreground: 54 61% 7%;
+    --secondary: 54 10% 81%;
+    --secondary-foreground: 54 10% 21%;
+    --accent: 54 18% 74%;
+    --accent-foreground: 54 18% 14%;
+    --destructive: 11 81% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 54 61% 47%;
+    --chart-1: 54 61% 47%;
+    --chart-2: 54 10% 81%;
+    --chart-3: 54 18% 74%;
+    --chart-4: 54 10% 84%;
+    --chart-5: 54 64% 47%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 54 50% 3%;
+    --foreground: 54 25% 97%;
+    --muted: 54 38% 15%;
+    --muted-foreground: 54 11% 73%;
+    --popover: 54 50% 3%;
+    --popover-foreground: 54 25% 97%;
+    --card: 54 50% 4%;
+    --card-foreground: 54 25% 98%;
+    --border: 54 9% 15%;
+    --input: 54 9% 15%;
+    --primary: 54 61% 47%;
+    --primary-foreground: 54 61% 7%;
+    --secondary: 54 17% 17%;
+    --secondary-foreground: 54 17% 77%;
+    --accent: 54 25% 22%;
+    --accent-foreground: 54 25% 82%;
+    --destructive: 11 81% 56%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 54 61% 47%;
+    --chart-1: 54 61% 47%;
+    --chart-2: 54 17% 17%;
+    --chart-3: 54 25% 22%;
+    --chart-4: 54 17% 20%;
+    --chart-5: 54 64% 47%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Add these new styles */
+.auth-input-label {
+  @apply text-left block mb-2 text-sm font-medium;
+}
+
+.auth-input {
+  @apply w-full text-left;
+}
+
+.page-container {
+  @apply px-4 md:px-6 lg:px-8 mx-auto max-w-7xl;
+}
+
+.section-padding {
+  @apply py-12 md:py-16 lg:py-20;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
