@@ -166,8 +166,6 @@ function App() {
           >
             <Route index element={<Settings />} />
           </Route>
-
-          {/* Merchant Routes (keeping these as is since they might have different layouts) */}
           <Route
             path="/merchant/virtual-account"
             element={
