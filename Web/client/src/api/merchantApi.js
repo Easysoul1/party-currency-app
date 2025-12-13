@@ -87,11 +87,15 @@ export const fetchTransactions = async (reference) => {
       }
     );
 
-    const data = await response.json();
+    if (response.status === 404) {
+      return { transactions: [] };
+    }
 
     if (!response.ok) {
-      throw new Error("No virtual accounts found. Create one to get started.");
+      throw new Error("Failed to fetch transactions");
     }
+
+    const data = await response.json();
 
     return data;
   } catch (error) {

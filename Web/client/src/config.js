@@ -1,5 +1,5 @@
 export const BASE_URL =
-  "http://4.233.210.185:8000";
+  import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export const ACCESS_TOKEN_DURATION = 14;
 
