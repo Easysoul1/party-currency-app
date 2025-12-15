@@ -11,7 +11,7 @@ import { PasswordInputs } from "@/components/forms/PasswordInputs";
 import { SignupSubmitButton } from "@/components/forms/SignupSubmitButton";
 import { TermsAndConditions } from "@/components/forms/TermsAndConditions";
 import { SocialAuthButtons } from "@/components/forms/SocialAuthButtons";
-import { signupCelebrantApi } from "@/api/authApi";
+import { signupCelebrantApi, getProfileApi } from "@/api/authApi";
 import { storeAuth } from "@/lib/util";
 import { USER_PROFILE_CONTEXT } from "@/context";
 import { formatErrorMessage } from "@/utils/errorUtils";
@@ -80,9 +80,15 @@ export function CelebrantSignupForm() {
         showAuthSuccess(
           "Account created successfully! Welcome to Party Currency."
         );
-        setUserProfile(data.user);
         const accessToken = data.token;
         storeAuth(accessToken, "customer", true);
+        
+        // Explicitly fetch profile to ensure we have the full user object
+        // consistent with login flow
+        const profileResponse = await getProfileApi();
+        const profileData = await profileResponse.json();
+        setUserProfile(profileData);
+        
         navigate("/dashboard");
       } else {
         const errorData = formatErrorMessage(data);
