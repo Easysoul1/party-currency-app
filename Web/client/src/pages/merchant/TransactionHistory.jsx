@@ -76,7 +76,8 @@ export default function TransactionHistory() {
           const transactionData = await fetchTransactions(accountData.account_reference);
           setTransactions(transactionData.transactions || []);
         } else {
-          setError("No virtual account found");
+          // No virtual account means no transactions yet
+          setTransactions([]);
         }
       } catch (error) {
         console.error("Error fetching data:", error);

@@ -106,3 +106,23 @@ export async function resetPassword(email, password) {
         throw error;
     }
 }
+
+export async function sendVerificationCode(email) {
+  return fetch(`${BASE_URL}/auth/send-code`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function verifyEmailCode(email, code) {
+  return fetch(`${BASE_URL}/auth/verify-code`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, code }),
+  });
+}

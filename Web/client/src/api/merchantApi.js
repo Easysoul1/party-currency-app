@@ -22,6 +22,10 @@ export async function getVirtualAccount() {
       },
     });
 
+    if (response.status === 404) {
+      return null;
+    }
+
     const data = await response.json();
 
     if (!response.ok) {
