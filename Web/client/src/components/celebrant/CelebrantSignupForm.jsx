@@ -11,7 +11,7 @@ import { PasswordInputs } from "@/components/forms/PasswordInputs";
 import { SignupSubmitButton } from "@/components/forms/SignupSubmitButton";
 import { TermsAndConditions } from "@/components/forms/TermsAndConditions";
 import { SocialAuthButtons } from "@/components/forms/SocialAuthButtons";
-import { signupCelebrantApi } from "@/api/authApi";
+import { signupCelebrantApi, getProfileApi } from "@/api/authApi";
 import { storeAuth } from "@/lib/util";
 import { USER_PROFILE_CONTEXT } from "@/context";
 import { formatErrorMessage } from "@/utils/errorUtils";
@@ -20,6 +20,16 @@ import {
   showAuthError,
   showValidationError,
 } from "@/utils/feedback";
+import { useEmailVerification } from "@/hooks/useEmailVerification";
+import { Loader2, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 const formSchema = z
   .object({
@@ -59,7 +69,23 @@ export function CelebrantSignupForm() {
     },
   });
 
+  const {
+    isVerified,
+    isSendingCode,
+    isVerifyingCode,
+    codeSent,
+    timer,
+    verificationCode,
+    setVerificationCode,
+    handleSendCode,
+    handleVerifyCode,
+  } = useEmailVerification(form);
+
   const onSubmit = async (values) => {
+    if (!isVerified) {
+      showValidationError("Please verify your email address first");
+      return;
+    }
     setLoading(true);
     // Clear any existing errors before submission
     form.clearErrors();
@@ -80,9 +106,15 @@ export function CelebrantSignupForm() {
         showAuthSuccess(
           "Account created successfully! Welcome to Party Currency."
         );
-        setUserProfile(data.user);
         const accessToken = data.token;
         storeAuth(accessToken, "customer", true);
+        
+        // Explicitly fetch profile to ensure we have the full user object
+        // consistent with login flow
+        const profileResponse = await getProfileApi();
+        const profileData = await profileResponse.json();
+        setUserProfile(profileData);
+        
         navigate("/dashboard");
       } else {
         const errorData = formatErrorMessage(data);
@@ -220,15 +252,80 @@ export function CelebrantSignupForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <NameInputs form={form} />
 
-          <FormInput
-            label="Email"
-            name="email"
-            type="email"
-            placeholder="example@gmail.com"
+          <FormField
             control={form.control}
-            labelClassName="text-left"
-            error={form.formState.errors.email?.message || serverErrors.email}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="space-y-2 text-left">
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <div className="flex gap-2">
+                    <div className="relative w-full">
+                      <Input
+                        type="email"
+                        placeholder="example@gmail.com"
+                        className="border-lightgray w-full"
+                        disabled={isVerified}
+                        {...field}
+                      />
+                      {isVerified && (
+                        <CheckCircle className="absolute right-3 top-2.5 h-5 w-5 text-green-500" />
+                      )}
+                    </div>
+                    {!isVerified && (
+                      <button
+                        type="button"
+                        onClick={handleSendCode}
+                        disabled={isSendingCode || timer > 0}
+                        className="px-4 py-2 bg-gray-900 text-white rounded-md text-sm whitespace-nowrap min-w-[100px] disabled:opacity-50 flex items-center justify-center transition-colors hover:bg-gray-700"
+                      >
+                        {isSendingCode ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : timer > 0 ? (
+                          `${timer}s`
+                        ) : (
+                          "Get Code"
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </FormControl>
+                <FormMessage />
+                {serverErrors.email && (
+                  <p className="text-sm font-medium text-destructive">
+                    {serverErrors.email}
+                  </p>
+                )}
+              </FormItem>
+            )}
           />
+
+          {codeSent && !isVerified && (
+            <div className="flex gap-2 items-end animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="space-y-2 text-left flex-1">
+                <FormLabel>Verification Code</FormLabel>
+                <Input
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  placeholder="Enter 4-digit code"
+                  className="border-lightgray w-full"
+                  maxLength={6}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleVerifyCode}
+                disabled={isVerifyingCode}
+                className="px-4 py-2 bg-green-600 text-white rounded-md text-sm mb-[2px] h-[42px] min-w-[80px] flex items-center justify-center hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
+                {isVerifyingCode ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Verify"
+                )}
+              </button>
+            </div>
+          )}
 
           <PasswordInputs
             form={form}
