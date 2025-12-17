@@ -16,6 +16,7 @@ export const merchantSignupSchema = z
       .startsWith("+234", "Phone number must start with +234")
       .min(13, "Phone number must be at least 10 digits long")
       .max(14, "Phone number must be 10-11 digits long"),
+    code: z.string().min(4, "Verification code is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -34,6 +35,7 @@ export const celebrantSignupSchema = z
       .startsWith("+234", "Phone number must start with +234")
       .min(13, "Phone number must be at least 10 digits long")
       .max(14, "Phone number must be 10-11 digits long"),
+    code: z.string().min(4, "Verification code is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",

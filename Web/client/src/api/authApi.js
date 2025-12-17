@@ -16,7 +16,8 @@ export async function signupCelebrantApi(
   last_name,
   email,
   password,
-  phone_number
+  phone_number,
+  code
 ) {
   return fetch(`${BASE_URL}/auth/signup/user`, {
     method: "POST",
@@ -29,6 +30,7 @@ export async function signupCelebrantApi(
       email,
       password,
       phone_number,
+      code,
     }),
   });
 }
@@ -63,6 +65,7 @@ export async function signupMerchantApi(values) {
       state: values.state,
       city: values.city,
       phone_number: values.phoneNumber,
+      code: values.code,
     }),
   });
 }
@@ -108,7 +111,7 @@ export async function resetPassword(email, password) {
 }
 
 export async function sendVerificationCode(email) {
-  return fetch(`${BASE_URL}/auth/send-code`, {
+  return fetch(`${BASE_URL}/auth/send_mail`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -118,7 +121,7 @@ export async function sendVerificationCode(email) {
 }
 
 export async function verifyEmailCode(email, code) {
-  return fetch(`${BASE_URL}/auth/verify-code`, {
+  return fetch(`${BASE_URL}/auth/verify_mail`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
