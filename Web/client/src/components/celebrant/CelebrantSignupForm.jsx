@@ -66,6 +66,7 @@ export function CelebrantSignupForm() {
       password: "",
       confirmPassword: "",
       phone: "+234",
+      code: "",
     },
   });
 
@@ -82,23 +83,20 @@ export function CelebrantSignupForm() {
   } = useEmailVerification(form);
 
   const onSubmit = async (values) => {
-    if (!isVerified) {
-      showValidationError("Please verify your email address first");
-      return;
-    }
     setLoading(true);
     // Clear any existing errors before submission
     form.clearErrors();
     setServerErrors({});
     console.log(values);
     try {
-      const { firstName, lastName, email, password, phone } = values;
+      const { firstName, lastName, email, password, phone, code } = values;
       const response = await signupCelebrantApi(
         firstName,
         lastName,
         email,
         password,
-        phone
+        phone,
+        code
       );
       const data = await response.json();
 
@@ -300,32 +298,21 @@ export function CelebrantSignupForm() {
             )}
           />
 
-          {codeSent && !isVerified && (
-            <div className="flex gap-2 items-end animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="space-y-2 text-left flex-1">
-                <FormLabel>Verification Code</FormLabel>
-                <Input
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
-                  placeholder="Enter 4-digit code"
-                  className="border-lightgray w-full"
-                  maxLength={6}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={handleVerifyCode}
-                disabled={isVerifyingCode}
-                className="px-4 py-2 bg-green-600 text-white rounded-md text-sm mb-[2px] h-[42px] min-w-[80px] flex items-center justify-center hover:bg-green-700 transition-colors disabled:opacity-50"
-              >
-                {isVerifyingCode ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Verify"
-                )}
-              </button>
+          <div className="flex gap-2 items-end animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="space-y-2 text-left flex-1">
+              <FormLabel>Verification Code</FormLabel>
+              <Input
+                value={verificationCode}
+                onChange={(e) => {
+                   setVerificationCode(e.target.value);
+                   form.setValue("code", e.target.value);
+                }}
+                placeholder="Enter verification code"
+                className="border-lightgray w-full"
+                maxLength={6}
+              />
             </div>
-          )}
+          </div>
 
           <PasswordInputs
             form={form}
